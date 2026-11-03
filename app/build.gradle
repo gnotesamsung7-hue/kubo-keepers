@@ -1,0 +1,43 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.markdave.kubokeepers'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.markdave.kubokeepers'
+        minSdk 24
+        targetSdk 34
+        // Each GitHub build gets a higher number, so a new APK installs over the old one.
+        versionCode((System.getenv('GITHUB_RUN_NUMBER') ?: '1') as Integer)
+        versionName "1.0." + (System.getenv('GITHUB_RUN_NUMBER') ?: '0')
+    }
+
+    // Fixed key: every build is signed the same way, so updates install
+    // without uninstalling (and your levels, gems and research are kept).
+    signingConfigs {
+        fixed {
+            storeFile file('kubokeepers.keystore')
+            storePassword 'kubokeepers'
+            keyAlias 'kubokeepers'
+            keyPassword 'kubokeepers'
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.fixed
+        }
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.fixed
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
